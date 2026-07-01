@@ -1,13 +1,14 @@
 import 'dart:convert';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 
 class GroqService {
-  static final String _apiKey = dotenv.env['GROQ_API_KEY'] ?? '';
+  static const String _apiKey = String.fromEnvironment('GROQ_API_KEY', defaultValue: '');
   static const String _baseUrl = 'https://api.groq.com/openai/v1/chat/completions';
 
   Future<String> sendMessage(String message) async {
-    if (_apiKey.isEmpty) return "⚠️ API key not configured.";
+    if (_apiKey.isEmpty) {
+      return "⚠️ API key not configured. Please set GROQ_API_KEY.";
+    }
 
     try {
       final response = await http.post(
@@ -19,7 +20,7 @@ class GroqService {
         body: jsonEncode({
           'model': 'llama-3.1-8b-instant',
           'messages': [
-            {'role': 'system', 'content': 'You are NAUB AI, a helpful assistant for students.'},
+            {'role': 'system', 'content': 'You are NAUB AI, a helpful assistant.'},
             {'role': 'user', 'content': message}
           ],
           'temperature': 0.7,
